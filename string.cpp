@@ -3,7 +3,6 @@
 #include <cstring>
 #define IPSIZE 4
 
-
     /**
      * @brief Initiates an empty string
      */
@@ -22,13 +21,15 @@
     	{
         	this-> length = str.length;
         
-       		this->data = new char[this->length +1];
+       		this->data = new char[(int)(this->length) +1];
        		
-       		strncpy(this->data, str.data, length +1);
+       		strncpy(this->data, str.data,(int)(length) +1);
+         
      	}
      	else
      	{
-     		String();
+     		data = NULL;
+    	 length=0;
      	}
 	}
 
@@ -40,12 +41,14 @@
     	if(str != NULL)
     	{
     		this-> length = strlen(str);
-    		this-> data = new char[this->length +1];
+    		this-> data = new char[(int)(this->length) +1];
     		strncpy(this->data, str, length + 1);
+       
      	}
      	else
      	{
-     		String();
+     		data = NULL;
+    	 length=0;
      	}
      }
     		
@@ -64,11 +67,25 @@
      */
     String& String::operator=(const String &rhs)
     {
-    	this -> ~String();
+ 	   	if(this->data != NULL)
+    	{
+    		delete [] this->data;
+    	}
     	if(rhs.data != NULL)
     	{
-    		 String(rhs);
-    	}
+    
+        	this-> length = rhs.length;
+        
+       		this->data = new char[(int)(this->length) +1];
+       		
+       		strncpy(this->data, rhs.data,(int)(length) +1);
+     	}
+     	else
+     	{
+     		data = NULL;
+    	 length=0;
+     	}
+    	
     	return *this;
     }
     
@@ -78,11 +95,23 @@
      */
     String& String::operator=(const char *str)
     {
-       	this -> ~String();
+   
+ 	   	if(this->data != NULL)
+   	  {
+    		delete [] this->data;
+    	}
     	if(str != NULL)
     	{
-    		String(str);
-    	}
+    		this-> length = strlen(str);
+    		this-> data = new char[(int)(this->length) +1];
+    		strncpy(this->data, str, length + 1);
+       
+     	}
+     	else
+     	{
+     		data = NULL;
+    	 length=0;
+     	}
     	return *this;
     }
 
@@ -92,7 +121,7 @@
      */
     bool String::equals(const String &rhs) const
     {
-    	if(strncmp(this->data, rhs.data,length) == 0)
+    	if((rhs.data != NULL) && (strncmp(this->data, rhs.data,(int)(length)) == 0))
     	{
     	    	return true;
     	}
@@ -105,7 +134,7 @@
     bool String::equals(const char *rhs) const
     {
 
-    	if(std::strncmp(data, rhs,length) == 0)
+    	if((rhs!=NULL) &&(std::strncmp(data, rhs,length) == 0))
     	{
     	    	return true;
     	}
@@ -121,18 +150,33 @@
      */
     void String::split(const char *delimiters, String **output, size_t *size) const
     {
-
     	if(size == NULL || delimiters==NULL || data==NULL)
     	{
     		return;
     	}
     	int delimitersSize =strlen(delimiters),lastDelim=0;
     	*size =0;
-    	if(output==NULL)
+     char* strtemp;
+    	if(output == NULL)
     	{
     		*size =2;
     	}
-    	for(int i=0; i<this->length; i++)
+    	for(int i=0; i<(int)(this->length); i++)
+    	{
+    		for(int j=0; j<delimitersSize;j++)
+    		{
+    			if(this-> data[i]== delimiters[j])
+    			{
+    				if(i>0)
+    				{                    
+    					(*size)++;
+    				}
+     			}
+    		}
+    	}
+     *output=new String[(int)(*size)+1];
+     *size =0;
+     for(int i=0; i<(int)(this->length); i++)
     	{
     		for(int j=0; j<delimitersSize;j++)
     		{
@@ -140,11 +184,15 @@
     			{
     				if(i>0)
     				{
-    					output[*size]->data = strtok(((this->data) + lastDelim),(delimiters +j));
-    					(*size)++;
+                                  
+    					strtemp = strtok((data+lastDelim) ,(delimiters +j));
+               (*output)[(int)*size] = String(strtemp);
+             (*size)++;
     				}
-    				lastDelim = i +1;
-    			}
+            lastDelim = i+1;
+     			}
+          strtemp = strtok((data+lastDelim), "\n");
+          (*output)[(int)*size] = String(strtemp);
     		}
     	}
     }
@@ -159,11 +207,11 @@
     int String::to_integer() const
     {
     	int ipPart=0, returnVal=0;
-    	size_t* size =0;
+    	size_t* size =new size_t;
     	String* output;
     	
     	split(".", &output, size);
-    	if(*size == IPSIZE)
+    	if((int)*size == IPSIZE)
     	{
     		for(int i=0; i<IPSIZE; i++)
     		{
@@ -173,17 +221,20 @@
     				returnVal+= ipPart<<(24-8*i );
     			}
     		}
+       delete size;
         	delete[] output;
          	return returnVal;
     	}
     	else if(size == 0)
     	{
     		returnVal = std::stoi(data, NULL, 10);
+        delete size;
     		delete[] output;
     		return returnVal;
     	}
     	else
     	{
+        delete size;
     		delete[] output;
     		return 0;
     	}
@@ -194,9 +245,11 @@
      */
     String String::trim() const
     {
-    	int head=0,tail=length;
-    	String strTrimed;
-    	while((data[head] == ' ') && (head< (length)+1))
+    	int head=0,tail=(int)(this->length)-1;
+     if (this->data != NULL)
+     {
+       	
+    	while((data[head] == ' ') && (head< (int)(length)+1))
     	{ 
     		head++;;
     	}
@@ -204,9 +257,22 @@
     	{ 
     		tail--;
     	}
-    	strncpy(strTrimed.data, (data+head) ,tail-head);
-    	return strTrimed;
-    }
+      tail++;
+      if(tail > head)
+      {
+         char* strtemp1=new char[tail-head];
+   	     strncpy(strtemp1, (&(this->data)[head]) ,(tail-head));
+        
+         String strTrimed = strtemp1;
+          
+         delete[] strtemp1;
+         return strTrimed;
+      }
+      
+     }
+       return String();
+   }
+
     	
     	
     		
