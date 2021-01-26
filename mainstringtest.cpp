@@ -1,4 +1,7 @@
 #include "string.h"
+#include "field.h"
+#include "ip.h"
+#include "port.h"
 #include <iostream>
 #include <cstring>
 
@@ -83,4 +86,55 @@ int main(){
 
 
 	std::cout << "done" << std::endl;
+	
+
+//Test Port
+	Port port1("src-port");
+	port1.set_value("src-port = 1-9");
+
+	std::cout<< "5 " << (port1.match_value("dst-port=5") ? "match" : "no match") << std::endl;
+	std::cout<< "1 " << (port1.match_value("src-port= 1") ? "match" : "no match") << std::endl;
+	std::cout<< "9 " << (port1.match_value("src-port=9") ? "match" : "no match") << std::endl;
+	std::cout<< "0 " << (port1.match_value("src-port=0") ? "match" : "no match") << std::endl;
+	std::cout<< "10 " << (port1.match_value("src-port=10") ? "match" : "no match") << std::endl;
+
+	//Test Ip
+	Ip ip1("src-ip");
+	ip1.set_value("src-ip=111.222.33.44/8");
+
+	std::cout<< "111.222.33.44 " << (ip1.match_value(String("dst-ip=111.222.33.44")) ? "match" : "no match") << std::endl;
+	std::cout<< "111.21.33.44 " << (ip1.match_value(String("src-ip=111.21.33.44")) ? "match" : "no match") << std::endl;
+	std::cout<< "111.0.0.0 " << (ip1.match_value(String("src-ip=111.0.0.0")) ? "match" : "no match") << std::endl;
+	std::cout<< "111.255.255.255 " << (ip1.match_value(String("src-ip=111.255.255.255")) ? "match" : "no match") << std::endl;
+	std::cout<< "112.0.0.0 " << (ip1.match_value(String("src-ip=112.0.0.0")) ? "match" : "no match") << std::endl;
+	std::cout<< "255.255.255.255 " << (ip1.match_value(String("src-ip=255.255.255.255")) ? "match" : "no match") << std::endl;
+	std::cout<< "0.0.0.1 " << (ip1.match_value(String("src-ip=0.0.0.1")) ? "match" : "no match") << std::endl;
+	std::cout<< "0.0.0.0 " << (ip1.match_value(String("src-ip=0.0.0.0")) ? "match" : "no match") << std::endl;
+
+	//Test field - implementation issues
+/*	std::cout<< "ip1 "<< (ip1.match(String("src-ip=111.222.33.44,dst-ip=111.222.33.44,src-port=5,dst-port=5")) ? "match" : "no match") << std::endl;
+	std::cout<< "port1 "<< (port1.match(String("src-ip=111.222.33.44,dst-ip=111.222.33.44,src-port=5,dst-port=5")) ? "match" : "no match") << std::endl;
+
+	std::cout<< "ip1 "<< (ip1.match(String("src-ip=112.222.33.44,dst-ip=111.222.33.44,src-port=5,dst-port=5")) ? "match" : "no match") << std::endl;
+	std::cout<< "port1 "<< (port1.match(String("src-ip=111.222.33.44,dst-ip=111.222.33.44,src-port=55,dst-port=5")) ? "match" : "no match") << std::endl;
+*/
+
+
+
+	Ip ip2("dst-ip");
+	ip2.set_value("dst-ip = 4.4.4.4/32");
+	std::cout<< "ip2 "<< (ip2.match(String("dst-ip=4.255.255.4")) ? "match" : "no match") << std::endl;
+
+	printf("chen");
+
+	Ip t("src-ip");
+	t.set_value("src-ip=3.3.3.3/32");
+	printf("chen2");
+	String s = String(",, , ,,src-ip=3.3.3.3 ,,,,  ,");
+	//std::cout<< "t "
+	int i= t.match(s);
+	printf("noam");
+	//"match" : "no match") << std::endl;
+	
 }
+

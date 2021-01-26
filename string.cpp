@@ -175,7 +175,7 @@
     		}
     	}
      *output=new String[(int)(*size)+1];
-     *size =0;
+     *size =1;
      for(int i=0; i<(int)(this->length); i++)
     	{
     		for(int j=0; j<delimitersSize;j++)
@@ -186,13 +186,14 @@
     				{
                                   
     					strtemp = strtok((data+lastDelim) ,(delimiters +j));
-               (*output)[(int)*size] = String(strtemp);
-             (*size)++;
+              			(*output)[(int)(*size)-1] = String(strtemp);
+               			(*size)++;
     				}
-            lastDelim = i+1;
+            		lastDelim = i+1;
      			}
-          strtemp = strtok((data+lastDelim), "\n");
-          (*output)[(int)*size] = String(strtemp);
+          		strtemp = strtok((data+lastDelim), "\n");
+          		(*output)[(int)(*size)-1] = String(strtemp);
+          		
     		}
     	}
     }
@@ -208,33 +209,36 @@
     {
     	int ipPart=0, returnVal=0;
     	size_t* size =new size_t;
+    	size_t* idx =new size_t;
     	String* output;
-    	
     	split(".", &output, size);
-    	if((int)*size == IPSIZE)
+       	if((int)*size == IPSIZE)
     	{
     		for(int i=0; i<IPSIZE; i++)
     		{
-    			ipPart=output[i].to_integer();
+    			
+    			ipPart=output[i].trim().to_integer();
     			if(ipPart<256 && ipPart>0)
     			{
     				returnVal+= ipPart<<(24-8*i );
     			}
     		}
-       delete size;
+       		delete size;
         	delete[] output;
          	return returnVal;
     	}
-    	else if(size == 0)
+    	else if(*size == 1)
     	{
-    		returnVal = std::stoi(data, NULL, 10);
-        delete size;
+    		*idx=0;
+    		
+    		returnVal = std::stoi(data, idx, 10);
+        	delete size;
     		delete[] output;
     		return returnVal;
     	}
     	else
     	{
-        delete size;
+        	delete size;
     		delete[] output;
     		return 0;
     	}
