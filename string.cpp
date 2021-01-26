@@ -40,9 +40,9 @@
     {
     	if(str != NULL)
     	{
-    		this-> length = strlen(str);
-    		this-> data = new char[(int)(this->length) +1];
-    		strncpy(this->data, str, length + 1);
+    		this-> length = strlen(str)+1;
+    		this-> data = new char[(int)(this->length) ];
+    		strncpy(this->data, str, length );
        
      	}
      	else
@@ -223,6 +223,7 @@
     				returnVal+= ipPart<<(24-8*i );
     			}
     		}
+    		delete idx;
        		delete size;
         	delete[] output;
          	return returnVal;
@@ -232,12 +233,14 @@
     		*idx=0;
     		
     		returnVal = std::stoi(data, idx, 10);
+    		delete idx;
         	delete size;
     		delete[] output;
     		return returnVal;
     	}
     	else
     	{
+    		delete idx;
         	delete size;
     		delete[] output;
     		return 0;

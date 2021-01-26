@@ -10,19 +10,19 @@
 
     bool  Ip::set_value(String val)
     {
-    	int ipValue=0,bitValue=0,lowb=0,highb=0;
+    	unsigned int ipValue=0,bitValue=0,lowb=0,highb=0;
     	String* output;
      	size_t* size = new size_t;
      	*size=0;
-    	val.split("=/", &output, size);
-    	if(*size == 3)
+    	val.split("/", &output, size);
+    	if(*size == 2)
     	{
     		
-    		ipValue=(output[1]).trim().to_integer();
-    		bitValue=(output[2]).trim().to_integer();
+    		ipValue=(output[0]).trim().to_integer();
+    		bitValue=(output[1]).trim().to_integer();
     		for(int i=0;i<32;i++)
     		{
-    			if((32-i)<= bitValue)
+    			if((32-i)<= (int)bitValue)
     			{
     				lowb+=pow(2,i);
     			}

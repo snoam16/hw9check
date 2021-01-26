@@ -31,7 +31,6 @@
    	
     Field::~Field()
     {
-    	pattern.~String();
     }
 
     field_type  Field::get_type() const

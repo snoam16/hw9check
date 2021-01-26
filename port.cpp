@@ -11,11 +11,11 @@
     	String* output;
      	size_t* size = new size_t;
      	*size=0;
-    	val.split("=-", &output, size);
-    	if(*size == 4)
+    	val.split("-", &output, size);
+    	if(*size == 2)
     	{
-    		range[0]=(output[2]).trim().to_integer();
-    		range[1]=(output[3]).trim().to_integer();
+    		range[0]=(output[0]).trim().to_integer();
+    		range[1]=(output[1]).trim().to_integer();
     		delete size;
     		delete[] output;
     		return true;
